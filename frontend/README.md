@@ -24,4 +24,4 @@ npm run build
 
 ## Deployment
 
-Deploy the `frontend` directory to Vercel and set `NEXT_PUBLIC_API_BASE_URL` to the Railway backend URL.
+Deploy the `frontend` directory to Vercel and set `NEXT_PUBLIC_API_BASE_URL` to the Render backend URL.

@@ -24,7 +24,7 @@ Tests       -> FastAPI app with in-memory SQLite
 - Backend: FastAPI, SQLAlchemy 2, Alembic, PostgreSQL, Pydantic v2, Pytest
 - Frontend: Next.js 14, React, TypeScript, Tailwind CSS, Axios, Leaflet, React Leaflet
 - Local infra: Docker Compose with PostgreSQL 15
-- Deployment targets: Railway for backend, Vercel for frontend
+- Deployment targets: Render for backend, Vercel for frontend
 
 ## Local Development
 
@@ -40,17 +40,38 @@ npm install && npm run dev
 
 Backend runs on `http://localhost:8000`. Frontend runs on `http://localhost:3000`.
 
-## Railway Deployment
+## Render Deployment
 
-1. Create a Railway project and add a PostgreSQL database.
-2. Set the backend root directory to `backend`.
-3. Add these variables:
+### Option A: Render Blueprint
+
+1. In Render, create a new Blueprint from this GitHub repository.
+2. Render reads `render.yaml` from the repository root.
+3. The blueprint creates:
+   - A Python web service named `street-food-finder-backend`
+   - A PostgreSQL database named `street-food-finder-db`
+4. Set `FRONTEND_URL` in the Render service environment after Vercel gives you the frontend URL.
+5. Render generates `SECRET_KEY`, sets `ENVIRONMENT=production`, and wires `DATABASE_URL` from the PostgreSQL database.
+
+### Option B: Manual Render Web Service
+
+1. Create a Render PostgreSQL database.
+2. Create a Render Web Service from this repository.
+3. Set the backend root directory to `backend`.
+4. Use this build command:
+   ```bash
+   pip install -r requirements.txt
+   ```
+5. Use this start command:
+   ```bash
+   python -m app.seed.seed_data && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+   ```
+6. Add these variables:
    - `DATABASE_URL`
    - `FRONTEND_URL`
    - `SECRET_KEY`
    - `ENVIRONMENT=production`
-   - `PORT`
-4. Railway uses `backend/railway.json` to run migrations, seed data, and start Uvicorn.
+   - `PYTHON_VERSION=3.11.9`
+7. Deploy, then open `/api/v1/health` on the Render service URL.
 
 ## Vercel Deployment
 
@@ -58,7 +79,7 @@ Backend runs on `http://localhost:8000`. Frontend runs on `http://localhost:3000
 2. Set the frontend root directory to `frontend`.
 3. Add this variable:
    - `NEXT_PUBLIC_API_BASE_URL`
-4. Deploy after the Railway backend URL is available.
+4. Deploy after the Render backend URL is available.
 
 ## API Contract
 

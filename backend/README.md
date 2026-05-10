@@ -1,6 +1,6 @@
 # Street Food Finder Backend
 
-FastAPI backend for vendors, food items, reviews, demo login, health checks, seed data, and deployment on Railway.
+FastAPI backend for vendors, food items, reviews, demo login, health checks, seed data, and deployment on Render.
 
 ## Setup
 
@@ -32,6 +32,28 @@ pytest app/tests
 
 The tests override the FastAPI database dependency with an in-memory SQLite engine.
 
-## Deployment
+## Render Deployment
 
-Railway uses `railway.json` and `Procfile`. The start command runs Alembic, seeds missing vendors idempotently, then starts Uvicorn.
+Use the repository-root `render.yaml` blueprint, or create a manual Render Web Service with:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start command:
+
+```bash
+python -m app.seed.seed_data && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+Required Render environment variables:
+
+```env
+DATABASE_URL=<Render PostgreSQL connection string>
+FRONTEND_URL=https://your-vercel-app.vercel.app
+SECRET_KEY=<generated-secret>
+ENVIRONMENT=production
+PYTHON_VERSION=3.11.9
+```
+
+The seed command is idempotent, so redeploys do not duplicate vendors.
